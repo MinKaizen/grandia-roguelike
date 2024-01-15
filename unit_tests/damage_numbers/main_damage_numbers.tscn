@@ -1,0 +1,36 @@
+[gd_scene load_steps=6 format=3 uid="uid://cve5l03xlfu46"]
+
+[ext_resource type="PackedScene" uid="uid://cklpvsu1vhpgt" path="res://unit_tests/damage_numbers/player_damage_numbers.tscn" id="1_84c5q"]
+[ext_resource type="Texture2D" uid="uid://6nutk1a4cg61" path="res://unit_tests/damage_numbers/grid_texture.png" id="1_efh7g"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_leulv"]
+albedo_texture = ExtResource("1_efh7g")
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_j4x83"]
+material = SubResource("StandardMaterial3D_leulv")
+size = Vector2(50, 50)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_hvtev"]
+points = PackedVector3Array(25.3919, 0.396748, 25.3919, -25.3919, -0.396748, -25.3919, -25.3919, 0.396748, -25.3919, 25.3919, -0.396748, -25.3919, -25.3919, -0.396748, 25.3919, -25.3919, 0.396748, 25.3919, 25.3919, 0.396748, -25.3919, 25.3919, -0.396748, 25.3919)
+
+[node name="Main" type="Node3D"]
+
+[node name="Floor" type="StaticBody3D" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Floor"]
+mesh = SubResource("PlaneMesh_j4x83")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor"]
+shape = SubResource("ConvexPolygonShape3D_hvtev")
+
+[node name="Player" parent="." instance=ExtResource("1_84c5q")]
+
+[node name="CameraPivot" type="Node3D" parent="."]
+
+[node name="Camera3D" type="Camera3D" parent="CameraPivot" groups=["camera"]]
+transform = Transform3D(0.707107, -0.5, 0.5, 0, 0.707107, 0.707107, -0.707107, -0.5, 0.5, 40, 57.34, 40)
+projection = 1
+size = 12.0
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.777969, 0.628303, 0, -0.628303, 0.777969, 0, 11, 8.59921)

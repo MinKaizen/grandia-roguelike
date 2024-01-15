@@ -1,0 +1,22 @@
+[gd_scene load_steps=2 format=3 uid="uid://345ppj6gpj2h"]
+
+[ext_resource type="Texture2D" uid="uid://ciuf1ddglt60j" path="res://assets/timeline_marker.png" id="1_nyg7t"]
+
+[node name="TimelineMarkerBlue" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+
+[node name="TextureRect" type="TextureRect" parent="."]
+modulate = Color(0.239216, 0.0705882, 1, 1)
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -50.0
+offset_top = -100.0
+offset_right = 50.0
+grow_horizontal = 2
+grow_vertical = 0
+texture = ExtResource("1_nyg7t")

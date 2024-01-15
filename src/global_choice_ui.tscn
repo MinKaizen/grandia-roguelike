@@ -1,0 +1,32 @@
+[gd_scene load_steps=3 format=3 uid="uid://bcwe7necnu2yy"]
+
+[ext_resource type="Script" path="res://src/global_choice_ui.gd" id="1_7xh0j"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ex2eg"]
+bg_color = Color(0.027451, 0, 0.188235, 0.584314)
+
+[node name="GlobalChoiceUI" type="PanelContainer" groups=["choice_ui"]]
+process_mode = 2
+offset_right = 1920.0
+offset_bottom = 1080.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_ex2eg")
+script = ExtResource("1_7xh0j")
+
+[node name="Center" type="CenterContainer" parent="."]
+layout_mode = 2
+
+[node name="ChoiceContainer" type="VBoxContainer" parent="Center"]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="MoveButton" type="Button" parent="Center/ChoiceContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 50
+text = "MOVE"
+
+[node name="AttackButton" type="Button" parent="Center/ChoiceContainer"]
+visible = false
+layout_mode = 2
+theme_override_font_sizes/font_size = 50
+text = "ATTACK"

@@ -1,0 +1,65 @@
+[gd_scene load_steps=10 format=3 uid="uid://bd2lyrmwvauk3"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_32fnp"]
+albedo_color = Color(1, 0.321569, 0.717647, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_qdtnh"]
+material = SubResource("StandardMaterial3D_32fnp")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pd1dh"]
+albedo_color = Color(1, 0.321569, 0.717647, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_tsr7n"]
+material = SubResource("StandardMaterial3D_pd1dh")
+top_radius = 0.1
+bottom_radius = 0.1
+height = 1.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_26osh"]
+albedo_color = Color(1, 0.321569, 0.717647, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_uetdu"]
+material = SubResource("StandardMaterial3D_26osh")
+radius = 0.205
+height = 0.57
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_f4ct6"]
+albedo_color = Color(1, 0.321569, 0.717647, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_b4lyj"]
+material = SubResource("StandardMaterial3D_f4ct6")
+top_radius = 0.0
+bottom_radius = 0.6
+height = 1.1
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_x8sve"]
+
+[node name="EnemyWizard" type="CharacterBody3D"]
+
+[node name="Meshes" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+
+[node name="Body" type="MeshInstance3D" parent="Meshes"]
+mesh = SubResource("CapsuleMesh_qdtnh")
+
+[node name="Wand" type="Node3D" parent="Meshes"]
+transform = Transform3D(0.603653, 0.797247, 0, -0.797247, 0.603653, 0, 0, 0, 1, 0, 0, -0.796314)
+metadata/_edit_group_ = true
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Meshes/Wand"]
+mesh = SubResource("CylinderMesh_tsr7n")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="Meshes/Wand"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.691162, 0)
+mesh = SubResource("SphereMesh_uetdu")
+
+[node name="Hat" type="Node3D" parent="Meshes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.28735, 0)
+metadata/_edit_group_ = true
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Meshes/Hat"]
+mesh = SubResource("CylinderMesh_b4lyj")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_x8sve")

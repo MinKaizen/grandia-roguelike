@@ -1,0 +1,66 @@
+[gd_scene load_steps=10 format=3 uid="uid://ryvnacgb13da"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_10par"]
+albedo_color = Color(1, 0.321569, 0.717647, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_e06x2"]
+material = SubResource("StandardMaterial3D_10par")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qii2t"]
+albedo_color = Color(1, 0.321569, 0.717647, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_k7r0w"]
+material = SubResource("StandardMaterial3D_qii2t")
+top_radius = 0.0
+bottom_radius = 0.2
+height = 0.8
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pddqp"]
+albedo_color = Color(1, 0.321569, 0.717647, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_sspqq"]
+material = SubResource("StandardMaterial3D_pddqp")
+top_radius = 0.05
+bottom_radius = 0.05
+height = 1.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_s5g1w"]
+albedo_color = Color(1, 0.321569, 0.717647, 1)
+
+[sub_resource type="PrismMesh" id="PrismMesh_sc6qm"]
+material = SubResource("StandardMaterial3D_s5g1w")
+size = Vector3(1.2, 0.8, 0.6)
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_2vuad"]
+
+[node name="EnemyKnight" type="CharacterBody3D"]
+
+[node name="Meshes" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+
+[node name="Body" type="MeshInstance3D" parent="Meshes"]
+mesh = SubResource("CapsuleMesh_e06x2")
+skeleton = NodePath("../..")
+
+[node name="Lance" type="Node3D" parent="Meshes"]
+transform = Transform3D(1, 0, 0, 0, -0.332161, -0.943223, 0, 0.943223, -0.332161, -0.725623, 0, 0.018)
+metadata/_edit_group_ = true
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="Meshes/Lance"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.880468, -0.0051523)
+mesh = SubResource("CylinderMesh_k7r0w")
+skeleton = NodePath("../../..")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Meshes/Lance"]
+mesh = SubResource("CylinderMesh_sspqq")
+skeleton = NodePath("../MeshInstance3D2")
+
+[node name="Hat" type="Node3D" parent="Meshes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.01385, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Meshes/Hat"]
+mesh = SubResource("PrismMesh_sc6qm")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_2vuad")

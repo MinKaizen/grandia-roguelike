@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://puhjtl5n5l2"]
+
+[ext_resource type="Script" path="res://timeline_actor.gd" id="1_0b0br"]
+
+[node name="TimelineActor" type="Node" groups=["temp_timeline_marker_owner"]]
+script = ExtResource("1_0b0br")

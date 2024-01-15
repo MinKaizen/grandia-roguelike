@@ -1,0 +1,8 @@
+[gd_scene load_steps=3 format=3 uid="uid://1ltvi7cho0lp"]
+
+[ext_resource type="Script" path="res://prototyping/movement/timeline_actor.gd" id="1_1f4c7"]
+[ext_resource type="PackedScene" uid="uid://chnoy7k3idtqq" path="res://prototyping/movement/default_marker.tscn" id="2_7fk42"]
+
+[node name="TimelineActor" type="Node" groups=["temp_timeline_marker_owner"]]
+script = ExtResource("1_1f4c7")
+marker_scene = ExtResource("2_7fk42")

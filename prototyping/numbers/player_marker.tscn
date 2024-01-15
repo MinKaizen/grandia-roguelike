@@ -1,0 +1,21 @@
+[gd_scene load_steps=3 format=3 uid="uid://br6pb4y6x8q7h"]
+
+[ext_resource type="Script" path="res://prototyping/numbers/marker.gd" id="1_s0vlw"]
+[ext_resource type="Texture2D" uid="uid://dvdsvpdjb2quh" path="res://prototyping/movement/timeline-marker.png" id="2_dwmuc"]
+
+[node name="PlayerMarker" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_s0vlw")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+modulate = Color(0.254902, 0.2, 1, 1)
+layout_mode = 0
+offset_left = -47.0
+offset_top = -86.0
+offset_right = 53.0
+offset_bottom = 14.0
+mouse_filter = 2
+texture = ExtResource("2_dwmuc")

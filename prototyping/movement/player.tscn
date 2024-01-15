@@ -1,0 +1,107 @@
+[gd_scene load_steps=16 format=3 uid="uid://d0icsi3gcnhdg"]
+
+[ext_resource type="Script" path="res://prototyping/movement/player.gd" id="1_1g7uw"]
+[ext_resource type="PackedScene" uid="uid://1ltvi7cho0lp" path="res://prototyping/movement/timeline_actor.tscn" id="2_3f0du"]
+[ext_resource type="PackedScene" uid="uid://b6nbwxcv86vtr" path="res://prototyping/movement/choice_ui.tscn" id="3_51hgq"]
+[ext_resource type="PackedScene" uid="uid://dveanwykr5hvu" path="res://prototyping/movement/player_marker.tscn" id="4_jngfb"]
+[ext_resource type="Texture2D" uid="uid://dvdsvpdjb2quh" path="res://prototyping/movement/timeline-marker.png" id="5_lu76t"]
+[ext_resource type="Script" path="res://prototyping/movement/hitbox.gd" id="6_dmrux"]
+[ext_resource type="Script" path="res://prototyping/movement/health.gd" id="7_twdpd"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3o5yx"]
+transparency = 1
+albedo_color = Color(0.317647, 0.411765, 1, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_vm4ul"]
+material = SubResource("StandardMaterial3D_3o5yx")
+radius = 2.0
+height = 6.0
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ymrio"]
+radius = 2.0
+height = 6.0
+
+[sub_resource type="Animation" id="Animation_mvdv4"]
+resource_name = "attack"
+length = 0.5
+step = 0.05
+tracks/0/type = "scale_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, 1, 1, 1, 0.1, 1, 0.8, 1.44, 0.8, 0.25, 1, 1.2, 0.694, 1.2, 0.5, 1, 1, 1, 1)
+
+[sub_resource type="Animation" id="Animation_0maks"]
+resource_name = "die"
+step = 0.05
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.05, 0.15, 0.3, 1),
+"transitions": PackedFloat32Array(1, 4.75683, 2.07053, 3.86375, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0.349066, 0, 0), Vector3(-1.91986, 0, 0), Vector3(-1.5708, 0, 0), Vector3(-1.5708, 0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_i6bfe"]
+resource_name = "idle"
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_i720h"]
+_data = {
+"attack": SubResource("Animation_mvdv4"),
+"die": SubResource("Animation_0maks"),
+"idle": SubResource("Animation_i6bfe")
+}
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_fnqm4"]
+radius = 2.0
+height = 6.0
+
+[node name="Player" type="CharacterBody3D" groups=["player"]]
+collision_layer = 2
+collision_mask = 3
+script = ExtResource("1_1g7uw")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
+mesh = SubResource("CapsuleMesh_vm4ul")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
+shape = SubResource("CapsuleShape3D_ymrio")
+
+[node name="TimelineActor" parent="." instance=ExtResource("2_3f0du")]
+marker_scene = ExtResource("4_jngfb")
+
+[node name="NavAgent" type="NavigationAgent3D" parent="."]
+
+[node name="ChoiceUI" parent="." node_paths=PackedStringArray("actor") instance=ExtResource("3_51hgq")]
+actor = NodePath("..")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_i720h")
+}
+
+[node name="Sprite3D" type="Sprite3D" parent="."]
+billboard = 1
+texture = ExtResource("5_lu76t")
+
+[node name="Hitbox" type="Area3D" parent="." groups=["player"]]
+collision_layer = 4
+collision_mask = 0
+monitoring = false
+script = ExtResource("6_dmrux")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Hitbox"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
+shape = SubResource("CapsuleShape3D_fnqm4")
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("7_twdpd")

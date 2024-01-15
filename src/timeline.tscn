@@ -1,0 +1,56 @@
+[gd_scene load_steps=3 format=3 uid="uid://d2p88qrpi4bvl"]
+
+[ext_resource type="Texture2D" uid="uid://bv20urnxgjk6q" path="res://assets/timeline.png" id="1_jtarr"]
+[ext_resource type="Script" path="res://src/timeline.gd" id="1_ykt7s"]
+
+[node name="Timeline" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_ykt7s")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -1000.0
+offset_top = -200.0
+grow_horizontal = 0
+grow_vertical = 0
+mouse_filter = 2
+texture = ExtResource("1_jtarr")
+
+[node name="WaitStart" type="Control" parent="."]
+anchors_preset = 0
+offset_left = 956.0
+offset_top = 978.0
+offset_right = 956.0
+offset_bottom = 978.0
+
+[node name="WaitEnd" type="Control" parent="."]
+anchors_preset = 0
+offset_left = 1526.0
+offset_top = 978.0
+offset_right = 1526.0
+offset_bottom = 978.0
+
+[node name="ChannelStart" type="Control" parent="."]
+anchors_preset = 0
+offset_left = 1526.0
+offset_top = 978.0
+offset_right = 1526.0
+offset_bottom = 978.0
+
+[node name="ChannelEnd" type="Control" parent="."]
+anchors_preset = 0
+offset_left = 1856.0
+offset_top = 978.0
+offset_right = 1856.0
+offset_bottom = 978.0

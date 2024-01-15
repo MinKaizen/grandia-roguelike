@@ -1,0 +1,120 @@
+[gd_scene load_steps=15 format=3 uid="uid://6q5p4e4guvwy"]
+
+[ext_resource type="Script" path="res://prototyping/numbers/player_knight.gd" id="1_tahbh"]
+[ext_resource type="Script" path="res://prototyping/numbers/move_command.gd" id="2_p8fyy"]
+[ext_resource type="Script" path="res://addons/godot_state_charts/state_chart.gd" id="3_3tyj0"]
+[ext_resource type="Script" path="res://addons/godot_state_charts/compound_state.gd" id="4_ikvfu"]
+[ext_resource type="Script" path="res://addons/godot_state_charts/atomic_state.gd" id="5_ltygj"]
+[ext_resource type="Script" path="res://addons/godot_state_charts/transition.gd" id="6_a3mi8"]
+[ext_resource type="PackedScene" uid="uid://c5pvhft3luikq" path="res://prototyping/numbers/timeline_actor.tscn" id="7_u47nt"]
+[ext_resource type="PackedScene" uid="uid://br6pb4y6x8q7h" path="res://prototyping/numbers/player_marker.tscn" id="8_fkli6"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pwp2o"]
+albedo_color = Color(0.309804, 0.356863, 1, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_e06x2"]
+material = SubResource("StandardMaterial3D_pwp2o")
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_k7r0w"]
+material = SubResource("StandardMaterial3D_pwp2o")
+top_radius = 0.0
+bottom_radius = 0.2
+height = 0.8
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_sspqq"]
+material = SubResource("StandardMaterial3D_pwp2o")
+top_radius = 0.05
+bottom_radius = 0.05
+height = 1.0
+
+[sub_resource type="PrismMesh" id="PrismMesh_sc6qm"]
+material = SubResource("StandardMaterial3D_pwp2o")
+size = Vector3(1.2, 0.8, 0.6)
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_2vuad"]
+
+[node name="PlayerKnight" type="CharacterBody3D"]
+script = ExtResource("1_tahbh")
+
+[node name="Meshes" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+
+[node name="Body" type="MeshInstance3D" parent="Meshes"]
+mesh = SubResource("CapsuleMesh_e06x2")
+skeleton = NodePath("../..")
+
+[node name="Lance" type="Node3D" parent="Meshes"]
+transform = Transform3D(1, 0, 0, 0, -0.332161, -0.943223, 0, 0.943223, -0.332161, -0.64, 0, 0.018)
+metadata/_edit_group_ = true
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="Meshes/Lance"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.880468, -0.0051523)
+mesh = SubResource("CylinderMesh_k7r0w")
+skeleton = NodePath("../../..")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Meshes/Lance"]
+mesh = SubResource("CylinderMesh_sspqq")
+skeleton = NodePath("../MeshInstance3D2")
+
+[node name="Hat" type="Node3D" parent="Meshes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.01385, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Meshes/Hat"]
+mesh = SubResource("PrismMesh_sc6qm")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_2vuad")
+
+[node name="MoveCommand" type="Node" parent="." node_paths=PackedStringArray("nav", "actor")]
+script = ExtResource("2_p8fyy")
+nav = NodePath("../NavigationAgent3D")
+actor = NodePath("..")
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
+
+[node name="State" type="Node" parent="."]
+script = ExtResource("3_3tyj0")
+
+[node name="Root" type="Node" parent="State"]
+script = ExtResource("4_ikvfu")
+initial_state = NodePath("Free")
+
+[node name="Free" type="Node" parent="State/Root"]
+script = ExtResource("4_ikvfu")
+initial_state = NodePath("Waiting")
+
+[node name="Waiting" type="Node" parent="State/Root/Free"]
+script = ExtResource("5_ltygj")
+
+[node name="onReadyToSelect" type="Node" parent="State/Root/Free/Waiting"]
+script = ExtResource("6_a3mi8")
+to = NodePath("../../Selecting")
+event = &"ready_to_select"
+
+[node name="Selecting" type="Node" parent="State/Root/Free"]
+script = ExtResource("5_ltygj")
+
+[node name="onCommandSelected" type="Node" parent="State/Root/Free/Selecting"]
+script = ExtResource("6_a3mi8")
+to = NodePath("../../Casting")
+event = &"command_selected"
+
+[node name="Casting" type="Node" parent="State/Root/Free"]
+script = ExtResource("5_ltygj")
+
+[node name="onCastFinished" type="Node" parent="State/Root/Free/Casting"]
+script = ExtResource("6_a3mi8")
+to = NodePath("../../Acting")
+event = &"cast_finished"
+
+[node name="Acting" type="Node" parent="State/Root/Free"]
+script = ExtResource("5_ltygj")
+
+[node name="onActFinished" type="Node" parent="State/Root/Free/Acting"]
+script = ExtResource("6_a3mi8")
+to = NodePath("../../Waiting")
+event = &"act_finished"
+
+[node name="TimelineActor" parent="." instance=ExtResource("7_u47nt")]
+marker = ExtResource("8_fkli6")

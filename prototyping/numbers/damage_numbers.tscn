@@ -1,0 +1,63 @@
+[gd_scene load_steps=11 format=3 uid="uid://vml1a1elibp8"]
+
+[ext_resource type="Texture2D" uid="uid://btakwm5g14uow" path="res://prototyping/numbers/grid_texture.png" id="1_eh3a5"]
+[ext_resource type="PackedScene" uid="uid://6q5p4e4guvwy" path="res://prototyping/numbers/player_knight.tscn" id="2_7npou"]
+[ext_resource type="PackedScene" uid="uid://y2fk5olh77t4" path="res://prototyping/numbers/enemy_ranger.tscn" id="3_ma0lq"]
+[ext_resource type="PackedScene" uid="uid://bd2lyrmwvauk3" path="res://prototyping/numbers/enemy_wizard.tscn" id="4_esbhe"]
+[ext_resource type="PackedScene" uid="uid://ryvnacgb13da" path="res://prototyping/numbers/enemy_knight.tscn" id="5_n1l2s"]
+[ext_resource type="PackedScene" uid="uid://bykfd8dmckvsu" path="res://prototyping/numbers/timeline.tscn" id="6_5u4b2"]
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_blqxl"]
+vertices = PackedVector3Array(-19.5, 0.5, 9.75, -19.5, 0.5, 19.5, -9.75, 0.5, 19.5, 9.75, 0.5, 19.5, 19.5, 0.5, 19.5, 19.5, 0.5, 9.75, 19.5, 0.5, -9.75, 19.5, 0.5, -19.5, 9.75, 0.5, -19.5, -9.75, 0.5, -19.5, -19.5, 0.5, -19.5, -19.5, 0.5, -9.75, -19.5, 0.5, 0, -19.5, 0.5, 9.75, -9.75, 0.5, 19.5, 0, 0.5, 19.5, 9.75, 0.5, 19.5, 19.5, 0.5, 9.75, 19.5, 0.5, 0, 19.5, 0.5, -9.75, 9.75, 0.5, -19.5, 0, 0.5, -19.5, 0, 0.5, -19.5, -9.75, 0.5, -19.5, -19.5, 0.5, -9.75, -19.5, 0.5, 0, 19.5, 0.5, 0, 0, 0.5, -19.5, -19.5, 0.5, 0, -9.75, 0.5, 19.5, 0, 0.5, 19.5, 19.5, 0.5, 9.75)
+polygons = [PackedInt32Array(2, 1, 0), PackedInt32Array(5, 4, 3), PackedInt32Array(8, 7, 6), PackedInt32Array(11, 10, 9), PackedInt32Array(14, 13, 12), PackedInt32Array(17, 16, 15), PackedInt32Array(19, 18, 20), PackedInt32Array(20, 18, 21), PackedInt32Array(23, 22, 24), PackedInt32Array(24, 22, 25), PackedInt32Array(31, 30, 26), PackedInt32Array(26, 30, 29), PackedInt32Array(26, 29, 28), PackedInt32Array(26, 28, 27)]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4eahb"]
+albedo_texture = ExtResource("1_eh3a5")
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_rqk8b"]
+material = SubResource("StandardMaterial3D_4eahb")
+size = Vector2(40, 40)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_7g1xa"]
+points = PackedVector3Array(20.3095, 0.317336, 20.3095, -20.3095, -0.317336, -20.3095, -20.3095, 0.317336, -20.3095, 20.3095, -0.317336, -20.3095, -20.3095, -0.317336, 20.3095, -20.3095, 0.317336, 20.3095, 20.3095, 0.317336, -20.3095, 20.3095, -0.317336, 20.3095)
+
+[node name="DamageNumbers" type="Node3D"]
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
+navigation_mesh = SubResource("NavigationMesh_blqxl")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="NavigationRegion3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="NavigationRegion3D/StaticBody3D"]
+mesh = SubResource("PlaneMesh_rqk8b")
+skeleton = NodePath("../..")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_7g1xa")
+
+[node name="CameraPivot" type="Node3D" parent="."]
+
+[node name="Camera" type="Camera3D" parent="CameraPivot" groups=["camera"]]
+transform = Transform3D(-0.707107, 0.5, -0.5, 0, 0.707107, 0.707107, 0.707107, 0.5, -0.5, -20, 30, -20)
+projection = 1
+size = 15.0
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.620258, 0.784193, 0.0179327, 1.20657e-09, -0.0228618, 0.999739, 0.784398, -0.620096, -0.0141802, -15.0338, 12.0121, 13.3111)
+
+[node name="PlayerKnight" parent="." instance=ExtResource("2_7npou")]
+transform = Transform3D(0.580703, 0, -0.814116, 0, 1, 0, 0.814116, 0, 0.580703, 5.86, 0, -4.895)
+
+[node name="EnemyRanger" parent="." instance=ExtResource("3_ma0lq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.58, 0, 4.17)
+
+[node name="EnemyWizard" parent="." instance=ExtResource("4_esbhe")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.935, 0, 12.01)
+
+[node name="EnemyKnight" parent="." instance=ExtResource("5_n1l2s")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 6.145)
+
+[node name="EnemyKnight2" parent="." instance=ExtResource("5_n1l2s")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.475, 0, 0)
+
+[node name="Timeline" parent="." instance=ExtResource("6_5u4b2")]

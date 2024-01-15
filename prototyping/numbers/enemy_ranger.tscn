@@ -1,0 +1,76 @@
+[gd_scene load_steps=9 format=3 uid="uid://y2fk5olh77t4"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ck8b2"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_thwjf"]
+albedo_color = Color(1, 0.321569, 0.717647, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_51c1p"]
+material = SubResource("StandardMaterial3D_thwjf")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_n0uuk"]
+albedo_color = Color(1, 0.321569, 0.717647, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_kyy8l"]
+material = SubResource("StandardMaterial3D_n0uuk")
+size = Vector3(0.1, 0.5, 0.1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2h8xc"]
+albedo_color = Color(1, 0.321569, 0.717647, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_wc77v"]
+material = SubResource("StandardMaterial3D_2h8xc")
+size = Vector3(0.05, 2.095, 0.05)
+
+[sub_resource type="SphereMesh" id="SphereMesh_y6ggh"]
+material = SubResource("StandardMaterial3D_thwjf")
+radius = 0.6
+height = 0.6
+
+[node name="EnemyRanger" type="CharacterBody3D"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_ck8b2")
+
+[node name="Meshes" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+
+[node name="Body" type="MeshInstance3D" parent="Meshes"]
+mesh = SubResource("CapsuleMesh_51c1p")
+skeleton = NodePath("../..")
+
+[node name="Bow" type="Node3D" parent="Meshes"]
+transform = Transform3D(0.630263, 0.750719, 0.197965, -0.765876, 0.642988, 4.44089e-16, -0.127289, -0.151617, 0.980209, 0, 0, -0.638138)
+metadata/_edit_group_ = true
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Meshes/Bow"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.569897, 0, 0)
+mesh = SubResource("BoxMesh_kyy8l")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="Meshes/Bow"]
+transform = Transform3D(0.951057, -0.309017, 0, 0.309017, 0.951057, 0, 0, 0, 1, 0.493831, 0.471088, 0)
+mesh = SubResource("BoxMesh_kyy8l")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="Meshes/Bow"]
+transform = Transform3D(0.809017, -0.587785, 0, 0.587785, 0.809017, 0, 0, 0, 1, 0.277334, 0.886895, 0)
+mesh = SubResource("BoxMesh_kyy8l")
+
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="Meshes/Bow"]
+transform = Transform3D(0.951057, 0.309017, 0, -0.309017, 0.951057, 0, 0, 0, 1, 0.494, -0.471, 0)
+mesh = SubResource("BoxMesh_kyy8l")
+
+[node name="MeshInstance3D5" type="MeshInstance3D" parent="Meshes/Bow"]
+transform = Transform3D(0.809017, 0.587785, 0, -0.587785, 0.809017, 0, 0, 0, 1, 0.277, -0.887, 0)
+mesh = SubResource("BoxMesh_kyy8l")
+
+[node name="MeshInstance3D6" type="MeshInstance3D" parent="Meshes/Bow"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.115011, 0, 0)
+mesh = SubResource("BoxMesh_wc77v")
+
+[node name="Hat" type="Node3D" parent="Meshes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.703247, 0)
+metadata/_edit_group_ = true
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Meshes/Hat"]
+mesh = SubResource("SphereMesh_y6ggh")

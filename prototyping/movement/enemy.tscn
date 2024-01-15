@@ -1,0 +1,88 @@
+[gd_scene load_steps=11 format=3 uid="uid://nbvra0w41p0r"]
+
+[ext_resource type="Script" path="res://prototyping/movement/enemy.gd" id="1_u4h15"]
+[ext_resource type="PackedScene" uid="uid://1ltvi7cho0lp" path="res://prototyping/movement/timeline_actor.tscn" id="2_gjr3c"]
+[ext_resource type="Script" path="res://prototyping/movement/enemy_emitter.gd" id="3_bmtll"]
+[ext_resource type="PackedScene" uid="uid://celi4ev1cg2m7" path="res://prototyping/movement/enemy_bullet.tscn" id="4_q6348"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xu16e"]
+albedo_color = Color(1, 0.41, 0.587, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_2al4h"]
+material = SubResource("StandardMaterial3D_xu16e")
+radius = 2.0
+height = 6.0
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_harwn"]
+radius = 2.0
+height = 6.0
+
+[sub_resource type="Animation" id="Animation_r5bmj"]
+resource_name = "attack"
+length = 1.5
+step = 0.05
+tracks/0/type = "scale_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0.15, 1, 1.4, 0.5, 1.4, 0.5, 1, 1, 1, 1, 0.65, 1, 1.4, 0.5, 1.4, 1, 1, 1, 1, 1, 1.15, 1, 1.4, 0.5, 1.4, 1.5, 1, 1, 1, 1)
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Emitter")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.15, 0.65, 1.15),
+"transitions": PackedFloat32Array(1, 1, 1),
+"values": [{
+"args": [],
+"method": &"emit"
+}, {
+"args": [],
+"method": &"emit"
+}, {
+"args": [],
+"method": &"emit"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_ytms8"]
+resource_name = "idle"
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_rrqls"]
+_data = {
+"attack": SubResource("Animation_r5bmj"),
+"idle": SubResource("Animation_ytms8")
+}
+
+[node name="Enemy" type="CharacterBody3D"]
+collision_layer = 2
+collision_mask = 3
+script = ExtResource("1_u4h15")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
+mesh = SubResource("CapsuleMesh_2al4h")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
+shape = SubResource("CapsuleShape3D_harwn")
+
+[node name="TimelineActor" parent="." instance=ExtResource("2_gjr3c")]
+speed = 40.0
+
+[node name="NavAgent" type="NavigationAgent3D" parent="."]
+avoidance_enabled = true
+
+[node name="Emitter" type="Node3D" parent="."]
+script = ExtResource("3_bmtll")
+bullet_scene = ExtResource("4_q6348")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+reset_on_save = false
+libraries = {
+"": SubResource("AnimationLibrary_rrqls")
+}

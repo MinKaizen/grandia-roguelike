@@ -1,0 +1,134 @@
+[gd_scene load_steps=16 format=3 uid="uid://dalaumqg0xqm1"]
+
+[ext_resource type="Texture2D" uid="uid://c6jyvegx1ip87" path="res://prototyping/timeline/timeline.png" id="1_bvjnq"]
+[ext_resource type="Script" path="res://prototyping/timeline/player.gd" id="1_ryjg2"]
+[ext_resource type="PackedScene" uid="uid://brs2hq4k07k5j" path="res://prototyping/timeline/timeline-marker.tscn" id="2_o4yed"]
+[ext_resource type="Script" path="res://prototyping/timeline/timeline_manager.gd" id="4_evwo6"]
+[ext_resource type="Script" path="res://prototyping/timeline/pause_button.gd" id="5_bhdpk"]
+[ext_resource type="Script" path="res://prototyping/timeline/choice_ui.gd" id="5_p77n4"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fg6ii"]
+albedo_color = Color(0.5129, 0.92, 0.506, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_yjvv4"]
+material = SubResource("StandardMaterial3D_fg6ii")
+size = Vector3(50, 1, 50)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_41bi7"]
+points = PackedVector3Array(25.3919, 0.690476, 25.3919, -25.3919, -0.896825, -25.3919, -25.3919, 0.690476, -25.3919, 25.3919, -0.896825, -25.3919, -25.3919, -0.896825, 25.3919, -25.3919, 0.690476, 25.3919, 25.3919, 0.690476, -25.3919, 25.3919, -0.896825, 25.3919)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_l815y"]
+albedo_color = Color(0, 0.6, 1, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_byqwq"]
+material = SubResource("StandardMaterial3D_l815y")
+radius = 1.0
+height = 4.0
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_j8h88"]
+points = PackedVector3Array(-0.25041, -1.06559, -0.961001, 0.0455663, 0.952141, 0.997768, 0.339426, 1.11829, 0.928346, 0.462089, -1.60714, 0.640893, 0.814783, 1.30203, -0.487023, -0.965635, 1.18975, 0.164435, -0.725713, -1.36458, 0.579376, 0.93809, -1.30906, -0.132543, -0.254891, 1.68542, -0.676214, -0.786851, -1.36785, -0.489421, 0.876492, 1.24659, 0.401691, 0.1683, 1.95497, 0.229596, -0.13641, -1.95298, -0.25855, 0.401111, -1.12629, -0.902936, -0.371062, 1.19093, -0.906971, -0.546702, 1.18449, 0.815474, -0.013873, -0.953646, 0.999321, 0.75168, -1.17729, 0.633943, 0.223164, 1.12615, -0.962382, -0.834529, 1.05577, -0.541012, -0.969147, -1.19401, -0.133028, -0.559494, 1.81712, 0.106672, -0.50041, -1.76148, 0.41065, 0.527294, -1.80554, -0.254789, 0.58675, 1.7431, -0.3144, 0.746805, -1.05261, -0.656476, 0.999325, 0.953283, -0.0137771, 0.106212, 1.75002, 0.649411, -0.309093, -1.18174, 0.931782, -0.194551, -1.56465, -0.796341, -0.7753, -0.996346, 0.631302, -0.601378, -1.17603, -0.777827)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_oujtr"]
+albedo_color = Color(1, 0, 0.0500002, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_fx8tj"]
+material = SubResource("StandardMaterial3D_oujtr")
+radius = 1.0
+height = 4.0
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_h2nxw"]
+points = PackedVector3Array(-0.25041, -1.06559, -0.961001, 0.0455663, 0.952141, 0.997768, 0.339426, 1.11829, 0.928346, 0.462089, -1.60714, 0.640893, 0.814783, 1.30203, -0.487023, -0.965635, 1.18975, 0.164435, -0.725713, -1.36458, 0.579376, 0.93809, -1.30906, -0.132543, -0.254891, 1.68542, -0.676214, -0.786851, -1.36785, -0.489421, 0.876492, 1.24659, 0.401691, 0.1683, 1.95497, 0.229596, -0.13641, -1.95298, -0.25855, 0.401111, -1.12629, -0.902936, -0.371062, 1.19093, -0.906971, -0.546702, 1.18449, 0.815474, -0.013873, -0.953646, 0.999321, 0.75168, -1.17729, 0.633943, 0.223164, 1.12615, -0.962382, -0.834529, 1.05577, -0.541012, -0.969147, -1.19401, -0.133028, -0.559494, 1.81712, 0.106672, -0.50041, -1.76148, 0.41065, 0.527294, -1.80554, -0.254789, 0.58675, 1.7431, -0.3144, 0.746805, -1.05261, -0.656476, 0.999325, 0.953283, -0.0137771, 0.106212, 1.75002, 0.649411, -0.309093, -1.18174, 0.931782, -0.194551, -1.56465, -0.796341, -0.7753, -0.996346, 0.631302, -0.601378, -1.17603, -0.777827)
+
+[node name="TimelineScene" type="Node3D"]
+
+[node name="Floor" type="StaticBody3D" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Floor"]
+mesh = SubResource("BoxMesh_yjvv4")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor"]
+shape = SubResource("ConvexPolygonShape3D_41bi7")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.244241, 0.969715, 0, -0.969715, 0.244241, 0, 16.7119, 0)
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(0.999997, -0.00206553, 0.00154815, 0, 0.599753, 0.800185, -0.00258132, -0.800183, 0.599751, 0.581774, 21.4373, 27.1689)
+current = true
+
+[node name="Player" type="CharacterBody3D" parent="." groups=["temp_timeline_actor"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.83576, 4, -6.81045)
+script = ExtResource("1_ryjg2")
+timeline_speed = 30.0
+player_controlled = true
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Player"]
+mesh = SubResource("CapsuleMesh_byqwq")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Player"]
+shape = SubResource("ConvexPolygonShape3D_j8h88")
+
+[node name="Enemy" type="CharacterBody3D" parent="." groups=["temp_timeline_actor"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.75397, 4, 0.498067)
+script = ExtResource("1_ryjg2")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Enemy"]
+mesh = SubResource("CapsuleMesh_fx8tj")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Enemy"]
+shape = SubResource("ConvexPolygonShape3D_h2nxw")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+offset_right = 1920.0
+offset_bottom = 1080.0
+alignment = 2
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+alignment = 2
+
+[node name="Timeline" type="Control" parent="VBoxContainer/HBoxContainer3" groups=["timeline"]]
+layout_mode = 2
+script = ExtResource("4_evwo6")
+marker_scene = ExtResource("2_o4yed")
+
+[node name="TimelineBar" type="TextureRect" parent="VBoxContainer/HBoxContainer3/Timeline"]
+layout_mode = 2
+offset_left = -502.0
+offset_top = -99.0
+offset_right = -2.0
+offset_bottom = 1.0
+texture = ExtResource("1_bvjnq")
+
+[node name="Start" type="Control" parent="VBoxContainer/HBoxContainer3/Timeline"]
+anchors_preset = 0
+offset_left = -483.0
+offset_top = -50.0
+offset_right = -483.0
+offset_bottom = -50.0
+
+[node name="End" type="Control" parent="VBoxContainer/HBoxContainer3/Timeline"]
+anchors_preset = 0
+offset_left = -33.0
+offset_top = -50.0
+offset_right = -33.0
+offset_bottom = -50.0
+
+[node name="ChoiceUI" type="Control" parent="."]
+process_mode = 3
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("5_p77n4")
+
+[node name="CenterContainer" type="CenterContainer" parent="ChoiceUI"]
+layout_mode = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+
+[node name="PauseButton" type="Button" parent="ChoiceUI/CenterContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 50
+text = "Pause Game"
+script = ExtResource("5_bhdpk")

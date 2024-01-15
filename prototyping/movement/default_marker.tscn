@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3 uid="uid://chnoy7k3idtqq"]
+
+[ext_resource type="Texture2D" uid="uid://dvdsvpdjb2quh" path="res://prototyping/movement/timeline-marker.png" id="1_gci3i"]
+[ext_resource type="Script" path="res://prototyping/movement/marker.gd" id="1_gttk6"]
+
+[node name="DefaultMarker" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_gttk6")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = -47.0
+offset_top = -86.0
+offset_right = 53.0
+offset_bottom = 14.0
+mouse_filter = 2
+texture = ExtResource("1_gci3i")
