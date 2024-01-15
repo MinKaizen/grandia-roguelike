@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://bjn7n5sftr527"]
+[gd_scene load_steps=15 format=3 uid="uid://bjn7n5sftr527"]
 
 [ext_resource type="Script" path="res://src/player.gd" id="1_gkgg5"]
 [ext_resource type="Script" path="res://addons/godot_state_charts/state_chart.gd" id="3_otun0"]
@@ -24,13 +24,50 @@ top_radius = 0.0
 bottom_radius = 0.3
 height = 1.0
 
+[sub_resource type="Animation" id="Animation_3oim7"]
+resource_name = "idle"
+
+[sub_resource type="Animation" id="Animation_3g5ul"]
+resource_name = "bump"
+length = 0.6
+step = 0.05
+tracks/0/type = "position_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MeshPivot")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, 0, 0, 0, 0.1, 1, 0, 0, -1.3, 0.2, 1, 0, 0, 0.5, 0.35, 1, 0, 0, 0, 0.6, 1, 0, 0, 0)
+tracks/1/type = "rotation_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("MeshPivot")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, 0, 0, 0, 1, 0.1, 1, 0.332, 0, 0, 0.943, 0.2, 1, 0.332, 0, 0, 0.943, 0.3, 1, -0.174, 0, 0, 0.985, 0.55, 1, 0, 0, 0, 1, 0.6, 1, 0, 0, 0, 0)
+
+[sub_resource type="Animation" id="Animation_p4ohg"]
+length = 0.001
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_co8qo"]
+_data = {
+"RESET": SubResource("Animation_p4ohg"),
+"bump": SubResource("Animation_3g5ul"),
+"idle": SubResource("Animation_3oim7")
+}
+
 [node name="PlayerRogueLeader" type="CharacterBody3D" groups=["timeline_actor"]]
+collision_layer = 2
+collision_mask = 3
 wall_min_slide_angle = 0.0
 script = ExtResource("1_gkgg5")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+[node name="MeshPivot" type="Node3D" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="MeshPivot"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 mesh = SubResource("CapsuleMesh_7ifnq")
+skeleton = NodePath("../..")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
@@ -59,6 +96,11 @@ script = ExtResource("6_u5pr0")
 to = NodePath("../../Moving")
 event = &"move_selected"
 
+[node name="onAttackSelected" type="Node" parent="State/Root/Free/Waiting"]
+script = ExtResource("6_u5pr0")
+to = NodePath("../../Attacking")
+event = &"attack_selected"
+
 [node name="Moving" type="Node" parent="State/Root/Free"]
 script = ExtResource("5_r134a")
 
@@ -72,9 +114,39 @@ script = ExtResource("6_u5pr0")
 to = NodePath("../../Waiting")
 event = &"move_timeout"
 
+[node name="Attacking" type="Node" parent="State/Root/Free"]
+script = ExtResource("4_51ay2")
+initial_state = NodePath("AttackMoving")
+
+[node name="AttackMoving" type="Node" parent="State/Root/Free/Attacking"]
+script = ExtResource("5_r134a")
+
+[node name="onAttackTargetReached" type="Node" parent="State/Root/Free/Attacking/AttackMoving"]
+script = ExtResource("6_u5pr0")
+to = NodePath("../../AttackAttacking")
+event = &"attack_target_reached"
+
+[node name="AttackAttacking" type="Node" parent="State/Root/Free/Attacking"]
+script = ExtResource("5_r134a")
+
+[node name="onAttackCompleted" type="Node" parent="State/Root/Free/Attacking/AttackAttacking"]
+script = ExtResource("6_u5pr0")
+to = NodePath("../../../Waiting")
+event = &"attack_completed"
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_co8qo")
+}
+
 [connection signal="state_entered" from="State/Root/Free/Waiting" to="." method="_on_waiting_state_entered"]
 [connection signal="state_exited" from="State/Root/Free/Waiting" to="." method="_on_waiting_state_exited"]
 [connection signal="state_physics_processing" from="State/Root/Free/Waiting" to="." method="_on_waiting_state_physics_processing"]
 [connection signal="state_entered" from="State/Root/Free/Moving" to="." method="_on_moving_state_entered"]
 [connection signal="state_exited" from="State/Root/Free/Moving" to="." method="_on_moving_state_exited"]
 [connection signal="state_physics_processing" from="State/Root/Free/Moving" to="." method="_on_moving_state_physics_processing"]
+[connection signal="state_exited" from="State/Root/Free/Attacking/AttackMoving" to="." method="_on_attack_moving_state_exited"]
+[connection signal="state_physics_processing" from="State/Root/Free/Attacking/AttackMoving" to="." method="_on_attack_moving_state_physics_processing"]
+[connection signal="state_entered" from="State/Root/Free/Attacking/AttackAttacking" to="." method="_on_attack_attacking_state_entered"]
+[connection signal="state_exited" from="State/Root/Free/Attacking/AttackAttacking" to="." method="_on_attack_attacking_state_exited"]
+[connection signal="state_physics_processing" from="State/Root/Free/Attacking/AttackAttacking" to="." method="_on_attack_attacking_state_physics_processing"]

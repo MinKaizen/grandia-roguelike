@@ -17,18 +17,23 @@ var stuck_duration: float = 0.0
 var max_stuck_duration: float = 1.0
 var direction: Vector3 = Vector3.ZERO
 var target_position: Vector3 = global_position
+var attack_target: Node3D
 
 @onready var camera = get_tree().get_first_node_in_group('camera')
 @onready var choice_ui = get_tree().get_first_node_in_group('choice_ui')
 @onready var state = $State
+@onready var animation = $AnimationPlayer
 
 func _ready():
 	choice_ui.connect('choice_selected', func(actor:Node, command: String, target):
 		if not actor == self:
 			return
-		if command == 'move' and target is Vector3:
+		elif command == 'move' and target is Vector3:
 			target_position = target
 			state.send_event('move_selected')
+		elif command == 'attack' and target is Node3D:
+			attack_target = target
+			state.send_event('attack_selected')
 	)
 
 func get_target_position(mouse_position: Vector2) -> Vector3:
@@ -72,3 +77,36 @@ func _on_moving_state_exited():
 	velocity = Vector3.ZERO
 	stuck_duration = 0
 	target_position = global_position
+
+func _on_attack_moving_state_physics_processing(delta):
+	if global_position.distance_to(attack_target.global_position) <= 1.2:
+		state.send_event('attack_target_reached')
+	direction = (attack_target.global_position - global_position).normalized()
+	speed = move_toward(speed, max_speed, acceleration * delta)
+	if speed >= 0.2 * max_speed:
+		rotation.y = -direction.signed_angle_to(Vector3(0,0,1), Vector3.UP)
+	velocity = speed * direction
+	move_and_slide()
+
+func _on_attack_moving_state_exited():
+	speed = 0
+	velocity = Vector3.ZERO
+
+func _on_attack_attacking_state_entered():
+	animation.play("bump")
+	await animation.animation_finished
+	state.send_event('attack_completed')
+
+func _on_attack_attacking_state_physics_processing(delta):
+	direction = (attack_target.global_position - global_position).normalized()
+	speed = move_toward(speed, max_speed, acceleration * delta)
+	if speed >= 0.2 * max_speed:
+		rotation.y = -direction.signed_angle_to(Vector3(0,0,1), Vector3.UP)
+	velocity = speed * direction
+	move_and_slide()
+
+func _on_attack_attacking_state_exited():
+	speed = 0
+	velocity = Vector3.ZERO
+	animation.play('RESET')
+
