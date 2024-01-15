@@ -26,7 +26,6 @@ theme_override_font_sizes/font_size = 50
 text = "MOVE"
 
 [node name="AttackButton" type="Button" parent="Center/ChoiceContainer"]
-visible = false
 layout_mode = 2
 theme_override_font_sizes/font_size = 50
 text = "ATTACK"
