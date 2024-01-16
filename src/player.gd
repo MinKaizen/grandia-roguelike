@@ -2,6 +2,7 @@ extends CharacterBody3D
 
 signal choice_time
 signal action_points_updated
+signal animation_attack_landed
 
 @export var max_speed: float = 5.0
 @export var acceleration: float = 40.0
@@ -34,6 +35,14 @@ func _ready():
 		elif command == 'attack' and target is Node3D:
 			attack_target = target
 			state.send_event('attack_selected')
+	)
+	self.connect('animation_attack_landed', func():
+		if attack_target is Node and 'receive_hit' in attack_target:
+			attack_target.receive_hit({
+				'damage': randi_range(34, 49),
+				'attacker': self,
+				'knockback': 1.5,
+			})
 	)
 
 func get_target_position(mouse_position: Vector2) -> Vector3:
@@ -109,4 +118,3 @@ func _on_attack_attacking_state_exited():
 	speed = 0
 	velocity = Vector3.ZERO
 	animation.play('RESET')
-

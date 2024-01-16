@@ -42,11 +42,15 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 script = ExtResource("1_8u32e")
 
 [node name="Pivot" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 0
+offset_top = -40.0
+offset_bottom = -40.0
+mouse_filter = 2
 
 [node name="Label" type="Label" parent="Pivot"]
 layout_mode = 1
@@ -63,8 +67,8 @@ grow_horizontal = 2
 grow_vertical = 2
 pivot_offset = Vector2(392.5, 83)
 theme_override_colors/font_outline_color = Color(0.921569, 0.0235294, 0.105882, 1)
-theme_override_constants/outline_size = 90
-theme_override_font_sizes/font_size = 100
+theme_override_constants/outline_size = 40
+theme_override_font_sizes/font_size = 70
 text = "WOW!"
 horizontal_alignment = 1
 vertical_alignment = 2

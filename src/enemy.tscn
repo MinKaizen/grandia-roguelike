@@ -1,18 +1,18 @@
-[gd_scene load_steps=11 format=3 uid="uid://beat0xmqmr57i"]
+[gd_scene load_steps=19 format=3 uid="uid://beat0xmqmr57i"]
 
 [ext_resource type="Script" path="res://addons/godot_state_charts/state_chart.gd" id="1_gfxsc"]
 [ext_resource type="Script" path="res://src/enemy.gd" id="1_q8poe"]
 [ext_resource type="Script" path="res://addons/godot_state_charts/compound_state.gd" id="2_p01fh"]
 [ext_resource type="Script" path="res://addons/godot_state_charts/atomic_state.gd" id="3_omu1n"]
 [ext_resource type="Script" path="res://addons/godot_state_charts/transition.gd" id="4_u5gjv"]
+[ext_resource type="Script" path="res://src/health.gd" id="6_753xs"]
+[ext_resource type="Script" path="res://addons/godot_state_charts/history_state.gd" id="6_vlomv"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_s52kw"]
 albedo_color = Color(1, 0.219608, 0.376471, 1)
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_1v6xi"]
 material = SubResource("StandardMaterial3D_s52kw")
-
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_o6swy"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3jcwy"]
 transparency = 1
@@ -24,23 +24,115 @@ top_radius = 0.0
 bottom_radius = 0.3
 height = 1.0
 
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_o6swy"]
+
+[sub_resource type="Animation" id="Animation_p4ohg"]
+length = 0.001
+
+[sub_resource type="Animation" id="Animation_3g5ul"]
+resource_name = "bump"
+length = 0.6
+step = 0.05
+tracks/0/type = "position_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MeshPivot")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, 0, 0, 0, 0.1, 1, 0, 0, -1.3, 0.2, 1, 0, 0, 0.5, 0.35, 1, 0, 0, 0, 0.6, 1, 0, 0, 0)
+tracks/1/type = "rotation_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("MeshPivot")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, 0, 0, 0, 1, 0.1, 1, 0.332, 0, 0, 0.943, 0.2, 1, 0.332, 0, 0, 0.943, 0.3, 1, -0.174, 0, 0, 0.985, 0.55, 1, 0, 0, 0, 1, 0.6, 1, 0, 0, 0, 0)
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0.2),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": ["animation_attack_landed"],
+"method": &"emit_signal"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_3oim7"]
+resource_name = "idle"
+
+[sub_resource type="Animation" id="Animation_klw8m"]
+resource_name = "flinch"
+length = 0.3
+step = 0.05
+tracks/0/type = "rotation_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MeshPivot")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, 0, 0, 0, 1, 0.05, 1, -0.259, 0, 0, 0.966, 0.2, 1, -0.259, 0, 0, 0.966, 0.25, 1, 0.087, 0, 0, 0.996, 0.3, 1, 0, 0, 0, 1)
+tracks/1/type = "position_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("MeshPivot")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, 0, 0, 0, 0.05, 1, 0, 0, -0.5, 0.1, 1, 0, 0, 0, 0.3, 1, 0, 0, 0)
+
+[sub_resource type="Animation" id="Animation_tvb4p"]
+resource_name = "die"
+length = 0.6
+step = 0.05
+tracks/0/type = "position_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MeshPivot")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, 0, 0, 0, 0.05, 1, 0, 0, -0.1, 0.55, 1, 0, 0, -0.3, 0.6, 1, 0, 0, 0.2)
+tracks/1/type = "rotation_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("MeshPivot")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, 0, 0, 0, 1, 0.05, 1, -0.044, 0, 0, 0.999, 0.55, 1, -0.131, 0, 0, 0.991, 0.6, 1, 0.707, 0, 0, 0.707)
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_co8qo"]
+_data = {
+"RESET": SubResource("Animation_p4ohg"),
+"bump": SubResource("Animation_3g5ul"),
+"die": SubResource("Animation_tvb4p"),
+"flinch": SubResource("Animation_klw8m"),
+"idle": SubResource("Animation_3oim7")
+}
+
 [node name="EnemyWizard" type="CharacterBody3D" groups=["timeline_actor"]]
 collision_layer = 2
 collision_mask = 3
 wall_min_slide_angle = 0.0
 script = ExtResource("1_q8poe")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+[node name="MeshPivot" type="Node3D" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="MeshPivot"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 mesh = SubResource("CapsuleMesh_1v6xi")
+skeleton = NodePath("../..")
+
+[node name="Facing" type="MeshInstance3D" parent="MeshPivot"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 1.5, 1)
+mesh = SubResource("CylinderMesh_0eup7")
+skeleton = NodePath("../..")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 shape = SubResource("CapsuleShape3D_o6swy")
-
-[node name="Facing" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 1.5, 1)
-mesh = SubResource("CylinderMesh_0eup7")
 
 [node name="State" type="Node" parent="."]
 script = ExtResource("1_gfxsc")
@@ -52,6 +144,16 @@ initial_state = NodePath("Free")
 [node name="Free" type="Node" parent="State/Root"]
 script = ExtResource("2_p01fh")
 initial_state = NodePath("Waiting")
+
+[node name="onFlinch" type="Node" parent="State/Root/Free"]
+script = ExtResource("4_u5gjv")
+to = NodePath("../../Flinch")
+event = &"flinch"
+
+[node name="onDie" type="Node" parent="State/Root/Free"]
+script = ExtResource("4_u5gjv")
+to = NodePath("../../Die")
+event = &"die"
 
 [node name="Waiting" type="Node" parent="State/Root/Free"]
 script = ExtResource("3_omu1n")
@@ -74,9 +176,46 @@ script = ExtResource("4_u5gjv")
 to = NodePath("../../Waiting")
 event = &"move_timeout"
 
+[node name="ResumePrevious" type="Node" parent="State/Root"]
+script = ExtResource("6_vlomv")
+deep = true
+default_state = NodePath("../Free")
+
+[node name="Flinch" type="Node" parent="State/Root"]
+script = ExtResource("3_omu1n")
+
+[node name="onFlinchCompleted" type="Node" parent="State/Root/Flinch"]
+script = ExtResource("4_u5gjv")
+to = NodePath("../../ResumePrevious")
+event = &"flinch_completed"
+
+[node name="onFlinch" type="Node" parent="State/Root/Flinch"]
+script = ExtResource("4_u5gjv")
+to = NodePath("..")
+event = &"flinch"
+
+[node name="onDie" type="Node" parent="State/Root/Flinch"]
+script = ExtResource("4_u5gjv")
+to = NodePath("../../Die")
+event = &"die"
+
+[node name="Die" type="Node" parent="State/Root"]
+script = ExtResource("3_omu1n")
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("6_753xs")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_co8qo")
+}
+
 [connection signal="state_entered" from="State/Root/Free/Waiting" to="." method="_on_waiting_state_entered"]
 [connection signal="state_exited" from="State/Root/Free/Waiting" to="." method="_on_waiting_state_exited"]
 [connection signal="state_physics_processing" from="State/Root/Free/Waiting" to="." method="_on_waiting_state_physics_processing"]
 [connection signal="state_entered" from="State/Root/Free/Moving" to="." method="_on_moving_state_entered"]
 [connection signal="state_exited" from="State/Root/Free/Moving" to="." method="_on_moving_state_exited"]
 [connection signal="state_physics_processing" from="State/Root/Free/Moving" to="." method="_on_moving_state_physics_processing"]
+[connection signal="state_entered" from="State/Root/Flinch" to="." method="_on_flinch_state_entered"]
+[connection signal="state_exited" from="State/Root/Flinch" to="." method="_on_flinch_state_exited"]
+[connection signal="state_entered" from="State/Root/Die" to="." method="_on_die_state_entered"]
