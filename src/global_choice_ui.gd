@@ -2,7 +2,7 @@ extends Control
 
 signal choice_selected
 
-enum COMMAND {NONE, MOVE, ATTACK}
+enum COMMAND {NONE, MOVE, ATTACK, AOE_SPELL}
 enum STATE {IDLE, CHOOSE_COMMAND, CHOOSE_TARGET}
 
 var actor: Node
@@ -18,28 +18,33 @@ func appear(actor: Node):
 
 func _ready():
 	hide()
-	
 	$Center/ChoiceContainer/MoveButton.connect('button_down', func():
 		hide()
 		state = STATE.CHOOSE_TARGET
 		command = COMMAND.MOVE
 	)
-
 	$Center/ChoiceContainer/AttackButton.connect('button_down', func():
 		hide()
 		state = STATE.CHOOSE_TARGET
 		command = COMMAND.ATTACK
 	)
+	$Center/ChoiceContainer/AoeSpellButton.connect('button_down', func():
+		hide()
+		state = STATE.CHOOSE_TARGET
+		command = COMMAND.AOE_SPELL
+	)
 
 func _unhandled_input(event):
 	if state != STATE.CHOOSE_TARGET:
 		return
-	if command == COMMAND.MOVE and event.is_action_pressed('Click'):
+	if not event.is_action_pressed('Click'):
+		return
+	if command == COMMAND.MOVE:
 		var mouse_position = get_viewport().get_mouse_position()
 		var target_position = get_target_position(mouse_position)
 		get_tree().paused = false
 		emit_signal('choice_selected', actor, 'move', target_position)
-	if command == COMMAND.ATTACK and event.is_action_pressed('Click'):
+	elif command == COMMAND.ATTACK:
 		var mouse_position = get_viewport().get_mouse_position()
 		var target = get_target(mouse_position)
 		if target != null:
@@ -47,7 +52,14 @@ func _unhandled_input(event):
 			emit_signal('choice_selected', actor, 'attack', target)
 		else:
 			print('Invalid attack target')
-
+	elif command == COMMAND.AOE_SPELL:
+		var mouse_position = get_viewport().get_mouse_position()
+		var target = get_target(mouse_position)
+		if target != null:
+			get_tree().paused = false
+			emit_signal('choice_selected', actor, 'aoe_spell', target)
+		else:
+			print('Invalid attack target')
 func get_target_position(mouse_position: Vector2) -> Vector3:
 	var ray_length = 999
 	var from = camera.project_ray_origin(mouse_position)

@@ -29,3 +29,8 @@ text = "MOVE"
 layout_mode = 2
 theme_override_font_sizes/font_size = 50
 text = "ATTACK"
+
+[node name="AoeSpellButton" type="Button" parent="Center/ChoiceContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 50
+text = "AOE SPELL"

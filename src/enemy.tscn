@@ -62,31 +62,8 @@ tracks/2/keys = {
 }]
 }
 
-[sub_resource type="Animation" id="Animation_3oim7"]
-resource_name = "idle"
-
-[sub_resource type="Animation" id="Animation_klw8m"]
-resource_name = "flinch"
-length = 0.3
-step = 0.05
-tracks/0/type = "rotation_3d"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("MeshPivot")
-tracks/0/interp = 2
-tracks/0/loop_wrap = true
-tracks/0/keys = PackedFloat32Array(0, 1, 0, 0, 0, 1, 0.05, 1, -0.259, 0, 0, 0.966, 0.2, 1, -0.259, 0, 0, 0.966, 0.25, 1, 0.087, 0, 0, 0.996, 0.3, 1, 0, 0, 0, 1)
-tracks/1/type = "position_3d"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("MeshPivot")
-tracks/1/interp = 2
-tracks/1/loop_wrap = true
-tracks/1/keys = PackedFloat32Array(0, 1, 0, 0, 0, 0.05, 1, 0, 0, -0.5, 0.1, 1, 0, 0, 0, 0.3, 1, 0, 0, 0)
-
 [sub_resource type="Animation" id="Animation_tvb4p"]
 resource_name = "die"
-length = 0.6
 step = 0.05
 tracks/0/type = "position_3d"
 tracks/0/imported = false
@@ -103,6 +80,28 @@ tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = PackedFloat32Array(0, 1, 0, 0, 0, 1, 0.05, 1, -0.044, 0, 0, 0.999, 0.55, 1, -0.131, 0, 0, 0.991, 0.6, 1, 0.707, 0, 0, 0.707)
 
+[sub_resource type="Animation" id="Animation_klw8m"]
+resource_name = "flinch"
+length = 0.45
+step = 0.05
+tracks/0/type = "rotation_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MeshPivot")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, 0, 0, 0, 1, 0.15, 1, -0.259, 0, 0, 0.966, 0.35, 1, -0.259, 0, 0, 0.966, 0.4, 1, 0.087, 0, 0, 0.996, 0.45, 1, 0, 0, 0, 1)
+tracks/1/type = "position_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("MeshPivot")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, 0, 0, 0, 0.15, 1, 0, 0, -0.5, 0.3, 1, 0, 0, 0, 0.45, 1, 0, 0, 0)
+
+[sub_resource type="Animation" id="Animation_3oim7"]
+resource_name = "idle"
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_co8qo"]
 _data = {
 "RESET": SubResource("Animation_p4ohg"),
@@ -112,7 +111,7 @@ _data = {
 "idle": SubResource("Animation_3oim7")
 }
 
-[node name="EnemyWizard" type="CharacterBody3D" groups=["timeline_actor"]]
+[node name="EnemyWizard" type="CharacterBody3D" groups=["enemy", "timeline_actor"]]
 collision_layer = 2
 collision_mask = 3
 wall_min_slide_angle = 0.0
@@ -145,16 +144,6 @@ initial_state = NodePath("Free")
 script = ExtResource("2_p01fh")
 initial_state = NodePath("Waiting")
 
-[node name="onFlinch" type="Node" parent="State/Root/Free"]
-script = ExtResource("4_u5gjv")
-to = NodePath("../../Flinch")
-event = &"flinch"
-
-[node name="onDie" type="Node" parent="State/Root/Free"]
-script = ExtResource("4_u5gjv")
-to = NodePath("../../Die")
-event = &"die"
-
 [node name="Waiting" type="Node" parent="State/Root/Free"]
 script = ExtResource("3_omu1n")
 
@@ -162,6 +151,11 @@ script = ExtResource("3_omu1n")
 script = ExtResource("4_u5gjv")
 to = NodePath("../../Moving")
 event = &"move_selected"
+
+[node name="onAttackSelected" type="Node" parent="State/Root/Free/Waiting"]
+script = ExtResource("4_u5gjv")
+to = NodePath("../../Attacking")
+event = &"attack_selected"
 
 [node name="Moving" type="Node" parent="State/Root/Free"]
 script = ExtResource("3_omu1n")
@@ -176,17 +170,47 @@ script = ExtResource("4_u5gjv")
 to = NodePath("../../Waiting")
 event = &"move_timeout"
 
-[node name="ResumePrevious" type="Node" parent="State/Root"]
+[node name="Attacking" type="Node" parent="State/Root/Free"]
+script = ExtResource("2_p01fh")
+initial_state = NodePath("Pursuing")
+
+[node name="Pursuing" type="Node" parent="State/Root/Free/Attacking"]
+script = ExtResource("3_omu1n")
+
+[node name="onTargetReached" type="Node" parent="State/Root/Free/Attacking/Pursuing"]
+script = ExtResource("4_u5gjv")
+to = NodePath("../../Hitting")
+event = &"target_reached"
+
+[node name="Hitting" type="Node" parent="State/Root/Free/Attacking"]
+script = ExtResource("3_omu1n")
+
+[node name="onHitCompleted" type="Node" parent="State/Root/Free/Attacking/Hitting"]
+script = ExtResource("4_u5gjv")
+to = NodePath("../../../Waiting")
+event = &"hit_completed"
+
+[node name="onFlinch" type="Node" parent="State/Root/Free"]
+script = ExtResource("4_u5gjv")
+to = NodePath("../../Flinch")
+event = &"flinch"
+
+[node name="onDie" type="Node" parent="State/Root/Free"]
+script = ExtResource("4_u5gjv")
+to = NodePath("../../Die")
+event = &"die"
+
+[node name="Resume" type="Node" parent="State/Root/Free"]
 script = ExtResource("6_vlomv")
 deep = true
-default_state = NodePath("../Free")
+default_state = NodePath("../Waiting")
 
 [node name="Flinch" type="Node" parent="State/Root"]
 script = ExtResource("3_omu1n")
 
 [node name="onFlinchCompleted" type="Node" parent="State/Root/Flinch"]
 script = ExtResource("4_u5gjv")
-to = NodePath("../../ResumePrevious")
+to = NodePath("../../Free/Resume")
 event = &"flinch_completed"
 
 [node name="onFlinch" type="Node" parent="State/Root/Flinch"]
@@ -216,6 +240,12 @@ libraries = {
 [connection signal="state_entered" from="State/Root/Free/Moving" to="." method="_on_moving_state_entered"]
 [connection signal="state_exited" from="State/Root/Free/Moving" to="." method="_on_moving_state_exited"]
 [connection signal="state_physics_processing" from="State/Root/Free/Moving" to="." method="_on_moving_state_physics_processing"]
+[connection signal="state_entered" from="State/Root/Free/Attacking/Pursuing" to="." method="_on_pursuing_state_entered"]
+[connection signal="state_exited" from="State/Root/Free/Attacking/Pursuing" to="." method="_on_pursuing_state_exited"]
+[connection signal="state_physics_processing" from="State/Root/Free/Attacking/Pursuing" to="." method="_on_pursuing_state_physics_processing"]
+[connection signal="state_entered" from="State/Root/Free/Attacking/Hitting" to="." method="_on_hitting_state_entered"]
+[connection signal="state_exited" from="State/Root/Free/Attacking/Hitting" to="." method="_on_hitting_state_exited"]
+[connection signal="state_physics_processing" from="State/Root/Free/Attacking/Hitting" to="." method="_on_hitting_state_physics_processing"]
 [connection signal="state_entered" from="State/Root/Flinch" to="." method="_on_flinch_state_entered"]
 [connection signal="state_exited" from="State/Root/Flinch" to="." method="_on_flinch_state_exited"]
 [connection signal="state_entered" from="State/Root/Die" to="." method="_on_die_state_entered"]

@@ -19,11 +19,19 @@ var max_stuck_duration: float = 1.0
 var direction: Vector3 = Vector3.ZERO
 var target_position: Vector3 = global_position
 var attack_target: Node3D
+var received_hit: Dictionary
+var channel_time_elapsed: float
+var channel_duration: float
+var explosion_already_hit = []
 
 @onready var camera = get_tree().get_first_node_in_group('camera')
 @onready var choice_ui = get_tree().get_first_node_in_group('choice_ui')
 @onready var state = $State
+@onready var health = $Health
 @onready var animation = $AnimationPlayer
+@onready var damage_number_scene: PackedScene = preload("res://src/damage_number.tscn")
+@onready var channeling_particles = $ChannelingParticles
+@onready var explosion: Node = preload("res://src/explosion.tscn").instantiate()
 
 func _ready():
 	choice_ui.connect('choice_selected', func(actor:Node, command: String, target):
@@ -35,6 +43,13 @@ func _ready():
 		elif command == 'attack' and target is Node3D:
 			attack_target = target
 			state.send_event('attack_selected')
+		elif command == 'aoe_spell' and target is Node3D:
+			attack_target = target
+			state.send_event('aoe_spell_selected')
+	)
+	animation.connect('animation_finished', func(anim_name: String):
+		if anim_name == 'flinch':
+			state.send_event('flinch_completed')
 	)
 	self.connect('animation_attack_landed', func():
 		if attack_target is Node and 'receive_hit' in attack_target:
@@ -44,6 +59,34 @@ func _ready():
 				'knockback': 1.5,
 			})
 	)
+#	get_tree().get_root().connect('ready', func(): 
+#		get_tree().get_root().add_child(explosion)
+#	)
+	explosion.connect('body_entered', func(body):
+		if body.is_in_group('enemy') and 'receive_hit' in body and body not in explosion_already_hit:
+			body.receive_hit({
+				'damage': randi_range(34, 49),
+				'attacker': explosion,
+				'knockback': 1.5,
+			})
+			print(body.global_position)
+			explosion_already_hit.append(body)
+	)
+
+func receive_hit(hit):
+	var is_flinchable = true
+	received_hit = hit
+	var damage_number = damage_number_scene.instantiate()
+	get_tree().root.add_child(damage_number)
+	damage_number.init(hit.damage, self.global_position, camera)
+	health.reduce_health(hit.damage)
+	if health.get_health() <= 0:
+		state.send_event('die')
+	elif is_flinchable:
+		state.send_event('flinch')
+
+func rotate_to(direction_to_face: Vector3):
+	rotation.y = -direction_to_face.signed_angle_to(Vector3(0,0,1), Vector3.UP)
 
 func get_target_position(mouse_position: Vector2) -> Vector3:
 	var ray_length = 9999
@@ -58,6 +101,7 @@ func get_target_position(mouse_position: Vector2) -> Vector3:
 
 func _on_waiting_state_entered():
 	action_points = 0.0
+	animation.play('RESET')
 
 func _on_waiting_state_physics_processing(delta):
 	action_points += action_speed * delta
@@ -77,7 +121,8 @@ func _on_moving_state_physics_processing(delta):
 	var slow_factor = min(1, lerp(0, 1, global_position.distance_to(target_position)))
 	speed = move_toward(speed, max_speed * slow_factor, acceleration * delta)
 	if speed >= 0.2 * max_speed:
-		rotation.y = -direction.signed_angle_to(Vector3(0,0,1), Vector3.UP)
+#		rotation.y = -direction.signed_angle_to(Vector3(0,0,1), Vector3.UP)
+		rotate_to(direction)
 	velocity = speed * direction
 	move_and_slide()
 
@@ -88,7 +133,7 @@ func _on_moving_state_exited():
 	target_position = global_position
 
 func _on_attack_moving_state_physics_processing(delta):
-	if global_position.distance_to(attack_target.global_position) <= 1.2:
+	if global_position.distance_to(attack_target.global_position) <= 2:
 		state.send_event('attack_target_reached')
 	direction = (attack_target.global_position - global_position).normalized()
 	speed = move_toward(speed, max_speed, acceleration * delta)
@@ -98,8 +143,7 @@ func _on_attack_moving_state_physics_processing(delta):
 	move_and_slide()
 
 func _on_attack_moving_state_exited():
-	speed = 0
-	velocity = Vector3.ZERO
+	pass
 
 func _on_attack_attacking_state_entered():
 	animation.play("bump")
@@ -118,3 +162,74 @@ func _on_attack_attacking_state_exited():
 	speed = 0
 	velocity = Vector3.ZERO
 	animation.play('RESET')
+
+func _on_flinch_state_entered():
+#	rotate_to(received_hit.attacker.global_position - self.global_position)
+	if 'knockback' in received_hit:
+		knockback(received_hit.attacker.global_position, received_hit.knockback)
+#		global_position += (global_position - received_hit.attacker.global_position).normalized() * received_hit.knockback
+	animation.stop()
+	animation.play('flinch')
+
+func _on_die_state_entered():
+#	rotate_to(received_hit.attacker.global_position - self.global_position)
+	if 'knockback' in received_hit:
+		knockback(received_hit.attacker.global_position, received_hit.knockback)
+#		global_position += (global_position - received_hit.attacker.global_position).normalized() * received_hit.knockback
+	animation.play('die')
+	await animation.animation_finished
+	queue_free()
+
+func knockback(from_position: Vector3, distance: float = 0.0):
+	from_position.y = 0
+	var pos_2d = global_position
+	pos_2d.y = 0
+	var direction: Vector3
+	if from_position == pos_2d:
+		direction = Vector3.RIGHT.rotated(Vector3.UP, randf_range(0, 2 * PI))
+	else:
+		direction = (pos_2d - from_position).normalized()
+	self.global_position += direction * distance
+	self.rotate_to(-direction)
+
+func _on_channeling_state_entered():
+	channel_time_elapsed = 0
+	channel_duration = 3
+	channeling_particles.emitting = true
+	animation.play('channel')
+
+func _on_channeling_state_physics_processing(delta):
+	channel_time_elapsed += delta
+	rotate_to(attack_target.global_position - self.global_position)
+	if channel_time_elapsed >= channel_duration:
+		state.send_event('channel_completed')
+
+func _on_channeling_state_exited():
+	channeling_particles.emitting = false
+	channel_time_elapsed = 0
+
+func _on_casting_state_entered():
+	if not explosion.get_parent():
+		get_tree().get_root().add_child(explosion)
+	explosion_already_hit = []
+	explosion.monitoring = true
+	animation.play('cast')
+	explosion.global_position = attack_target.global_position
+	explosion.global_position.y = -10
+	explosion.scale = Vector3.ZERO
+	var tween = create_tween()
+	tween.set_ease(Tween.EASE_OUT)
+	tween.set_trans(Tween.TRANS_EXPO)
+	tween.tween_property(explosion, 'scale', Vector3.ONE, 1)
+	tween.parallel().tween_property(explosion, 'global_position:y', 0, 1)
+	await tween.finished
+	explosion.monitoring = false
+	explosion.scale = Vector3.ZERO
+	explosion.global_position.y = -10
+	state.send_event('cast_completed')
+
+func _on_casting_state_physics_processing(delta):
+	pass
+
+func _on_casting_state_exited():
+	pass
